@@ -1,84 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TrailHub</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 700px;
-            margin: 1rem auto;
-            background-image: url('images/g5.jpg'); /* Background image */
-            background-size: cover;
-            background-position: center;
-        }
-        input, button, textarea, select {
-            font-size: 1rem;
-            margin: 0.25rem 0;
-            width: 100%;
-            padding: 0.5rem;
-        }
-        /* Button Color */
-        button {
-            cursor: pointer;
-            background-color: #8134ee; /* Lavender button */
-            border: none;
-            color: white;
-            font-size: 1rem;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #320e5c; /* Light Lavender on hover */
-        }
-        section {
-            border: 1px solid #ccc;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 6px;
-            background-color: rgba(255, 255, 255, 0.8);
-        }
-        h2 {
-            margin-top: 0;
-        }
-        #eventsList, #filesList, #slackMessages, #chatMessages {
-            border: 1px solid #aaa;
-            height: 150px;
-            overflow-y: auto;
-            margin-bottom: 0.5rem;
-            padding: 0.25rem;
-            white-space: pre-wrap;
-            background: #f9f9f9;
-        }
-        label {
-            font-weight: bold;
-            margin-top: 0.5rem;
-            display: block;
-        }
-        a {
-            color: #337ab7;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        /* Tagline Style */
-        #tagline {
-            font-size: 1.25rem;
-            color: #1f0707;
-            margin-top: -10px; /* Adjust as needed */
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TrailHub</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 1rem auto;
+      background-image: url('images/g5.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+    input, button, textarea, select {
+      font-size: 1rem;
+      margin: 0.25rem 0;
+      width: 100%;
+      padding: 0.5rem;
+    }
+    button {
+      cursor: pointer;
+      background-color: #8134ee;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      padding: 10px 20px;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #320e5c;
+    }
+    section {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+    h2 {
+      margin-top: 0;
+    }
+    #eventsList, #filesList, #slackMessages, #chatMessages {
+      border: 1px solid #aaa;
+      height: 150px;
+      overflow-y: auto;
+      margin-bottom: 0.5rem;
+      padding: 0.25rem;
+      white-space: pre-wrap;
+      background: #f9f9f9;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 0.5rem;
+      display: block;
+    }
+    a {
+      color: #337ab7;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    #tagline {
+      font-size: 1.25rem;
+      color: #1f0707;
+      margin-top: -10px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
 <h1>TrailHub</h1>
 <p id="tagline">"One path, One Goal"</p>
 
-<!-- LOGIN -->
+<!-- AUTH SECTION -->
 <section id="authSection">
 
   <!-- Login form -->
@@ -91,7 +89,7 @@
     <div id="loginMsg" style="color:red;"></div>
   </div>
 
-  <!-- Registration form (hidden by default) -->
+  <!-- Registration form -->
   <div id="registerForm" style="display:none;">
     <h2>Register</h2>
     <input type="text" id="regName" placeholder="Name" />
@@ -105,7 +103,7 @@
 
 </section>
 
-<!-- APP -->
+<!-- APP SECTION -->
 <section id="appSection" style="display:none;">
   <button id="logoutBtn">Logout</button>
 
@@ -161,7 +159,7 @@
     <button id="sendSlackMsgBtn">Send Message</button>
 
     <label>Update Message (Timestamp):</label>
-    <input type="text" id="slackUpdateTs" placeholder="Enter message timestamp (e.g., 1630441345)" />
+    <input type="text" id="slackUpdateTs" placeholder="Enter message timestamp" />
     <input type="text" id="slackUpdateText" placeholder="New message text" />
     <button id="updateSlackMsgBtn">Update Message</button>
 
@@ -170,7 +168,7 @@
     <button id="deleteSlackMsgBtn">Delete Message</button>
   </section>
 
-  <!-- Dictionary -->
+  <!-- Merriam-Webster Dictionary -->
   <section>
     <h2>Merriam-Webster Dictionary Lookup</h2>
     <input type="text" id="dictWord" placeholder="Enter a word" />
@@ -187,9 +185,7 @@
 </section>
 
 <script>
-  // Updated API_BASE to point to your Render backend URL
   const API_BASE = 'https://trailhub-sd5x.onrender.com/api';
-
   let jwtToken = null;
 
   function setToken(token) {
@@ -205,8 +201,9 @@
 
   async function apiFetch(path, method='GET', body=null) {
     const token = getToken();
-    if(!token && path !== '/login') throw new Error('Not authenticated');
-    const headers = { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` };
+    if(!token && path !== '/login' && path !== '/register') throw new Error('Not authenticated');
+    const headers = { 'Accept': 'application/json' };
+    if(token) headers['Authorization'] = `Bearer ${token}`;
     let fetchBody = null;
     if(body) {
       if(body instanceof FormData) fetchBody = body;
@@ -243,6 +240,7 @@
     }
   };
 
+  // Register
   document.getElementById('registerSubmitBtn').onclick = async () => {
     const name = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim();
@@ -261,24 +259,7 @@
     }
 
     try {
-      const response = await fetch(API_BASE + '/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ name, email, password, password_confirmation }),
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (data.errors) {
-          msg.textContent = Object.values(data.errors).flat().join(' ');
-        } else if (data.error) {
-          msg.textContent = data.error;
-        } else {
-          msg.textContent = 'Registration failed';
-        }
-        return;
-      }
-
+      const data = await apiFetch('/register', 'POST', { name, email, password, password_confirmation });
       setToken(data.access_token);
       document.getElementById('registerForm').style.display = 'none';
       document.getElementById('loginForm').style.display = 'none';
@@ -292,7 +273,7 @@
     }
   };
 
-  // Show register form, hide login form
+  // Show register form
   document.getElementById('showRegisterBtn').onclick = () => {
     document.getElementById('loginForm').style.display = 'none';
     document.getElementById('registerForm').style.display = 'block';
@@ -300,7 +281,7 @@
     clearInputs();
   };
 
-  // Show login form, hide register form
+  // Show login form
   document.getElementById('showLoginBtn').onclick = () => {
     document.getElementById('registerForm').style.display = 'none';
     document.getElementById('loginForm').style.display = 'block';
@@ -318,16 +299,23 @@
     setToken(null);
     document.getElementById('loginForm').style.display = 'block';
     document.getElementById('appSection').style.display = 'none';
+    clearInputs();
   };
 
-  // Clear all input fields on login
+  // Clear input fields
   function clearInputs() {
-    ['email','password','eventIdInput','addEventSummary','addEventDate','deleteEventId','deleteFileId',
-    'slackChannelId','slackSendText','slackUpdateTs','slackUpdateText','slackDeleteTs','dictWord','chatInput'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.value='';
+    [
+      'email', 'password', 'eventIdInput', 'addEventSummary', 'addEventDate',
+      'deleteEventId', 'deleteFileId', 'slackChannelId', 'slackSendText',
+      'slackUpdateTs', 'slackUpdateText', 'slackDeleteTs', 'dictWord', 'chatInput',
+      'regName', 'regEmail', 'regPassword', 'regPasswordConfirm'
+    ].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
     });
-    document.getElementById('loginMsg').textContent='';
+
+    clearMessages();
+
     document.getElementById('eventsList').textContent = 'No events loaded.';
     document.getElementById('filesList').textContent = 'No files loaded.';
     document.getElementById('slackMessages').textContent = 'No messages loaded.';
@@ -335,64 +323,57 @@
     document.getElementById('chatMessages').textContent = '';
   }
 
-  // CALENDAR
-
+  // Load calendar events
   async function loadEvents() {
     try {
       const events = await apiFetch('/cylendar/events');
       const el = document.getElementById('eventsList');
-      if(events.length === 0) el.textContent = 'No events found.';
-      else el.innerHTML = events.map(e => {
-        return `
-          <div>
-            <strong>Name of Event:</strong> ${e.summary}<br />
-            <strong>ID:</strong> ${e.id}<br />
-            <strong>Date:</strong> ${e.start.dateTime || e.start.date}<br />
-            <strong>Time:</strong> ${e.start.dateTime || 'N/A'}
-          </div>
-          <hr />
-        `;
-      }).join('');
-    } catch(e) {
+      if (events.length === 0) el.textContent = 'No events found.';
+      else el.innerHTML = events.map(e => `
+        <div>
+          <strong>Name of Event:</strong> ${e.summary}<br />
+          <strong>ID:</strong> ${e.id}<br />
+          <strong>Date:</strong> ${e.start.dateTime || e.start.date}<br />
+          <strong>Time:</strong> ${e.start.dateTime || 'N/A'}
+        </div>
+        <hr />
+      `).join('');
+    } catch (e) {
       document.getElementById('eventsList').textContent = 'Error loading events: ' + e.message;
     }
   }
-
   document.getElementById('listEventsBtn').onclick = loadEvents;
 
+  // Get event by ID
   document.getElementById('getEventBtn').onclick = async () => {
     const eventId = document.getElementById('eventIdInput').value.trim();
     const output = document.getElementById('eventDetails');
-    if(!eventId) { alert('Enter Event ID'); return; }
+    if (!eventId) {
+      alert('Enter Event ID');
+      return;
+    }
     try {
       const event = await apiFetch(`/cylendar/event/${encodeURIComponent(eventId)}`);
-      output.innerHTML = `
-        <div>
-          <strong>Name of Event:</strong> ${event.summary}<br />
-          <strong>ID:</strong> ${event.id}<br />
-          <strong>Date:</strong> ${event.start.dateTime || event.start.date}<br />
-          <strong>Time:</strong> ${event.start.dateTime || 'N/A'}
-        </div>
-        <hr />
-      `;
-    } catch(e) {
+      output.textContent = JSON.stringify(event, null, 2);
+    } catch (e) {
       output.textContent = 'Error: ' + e.message;
     }
   };
 
+  // Add event
   document.getElementById('addEventBtn').onclick = async () => {
     const summary = document.getElementById('addEventSummary').value.trim();
     const date = document.getElementById('addEventDate').value;
 
-    if (!summary || !date) { 
-      alert('Please enter event summary and date'); 
-      return; 
+    if (!summary || !date) {
+      alert('Please enter event summary and date');
+      return;
     }
 
-    const eventData = { 
-      summary, 
-      start: { date: date },  
-      end: { date: date }     
+    const eventData = {
+      summary,
+      start: { date },
+      end: { date }
     };
 
     try {
@@ -406,40 +387,46 @@
     }
   };
 
+  // Delete event
   document.getElementById('deleteEventBtn').onclick = async () => {
     const eventId = document.getElementById('deleteEventId').value.trim();
-    if(!eventId) { alert('Enter Event ID'); return; }
-    if(!confirm('Delete event?')) return;
+    if (!eventId) {
+      alert('Enter Event ID');
+      return;
+    }
+    if (!confirm('Delete event?')) return;
     try {
       await apiFetch(`/cylendar/event/${encodeURIComponent(eventId)}`, 'DELETE');
       alert('Event deleted');
       loadEvents();
       document.getElementById('deleteEventId').value = '';
-    } catch(e) {
+    } catch (e) {
       alert('Failed to delete event: ' + e.message);
     }
   };
 
-  // DRIVE
-
+  // Load Google Drive files
   async function loadFiles() {
     try {
       const files = await apiFetch('/SynDrive/list');
       const el = document.getElementById('filesList');
-      if(files.length === 0) el.textContent = 'No files found.';
-      else el.innerHTML = files.map(f => {
-        return `<a href="https://drive.google.com/file/d/${f.id}/view" target="_blank">${f.name} (ID: ${f.id})</a>`;
-      }).join('<br />');
-    } catch(e) {
+      if (files.length === 0) el.textContent = 'No files found.';
+      else el.innerHTML = files.map(f => `
+        <a href="https://drive.google.com/file/d/${f.id}/view" target="_blank">${f.name} (ID: ${f.id})</a>
+      `).join('<br />');
+    } catch (e) {
       document.getElementById('filesList').textContent = 'Error loading files: ' + e.message;
     }
   }
-
   document.getElementById('listFilesBtn').onclick = loadFiles;
 
+  // Upload file to Drive
   document.getElementById('uploadFileBtn').onclick = async () => {
     const input = document.getElementById('fileInput');
-    if(input.files.length === 0) { alert('Select a file'); return; }
+    if (input.files.length === 0) {
+      alert('Select a file');
+      return;
+    }
     const file = input.files[0];
     const formData = new FormData();
     formData.append('file', file);
@@ -448,31 +435,37 @@
       alert('File uploaded');
       input.value = '';
       loadFiles();
-    } catch(e) {
+    } catch (e) {
       alert('Upload failed: ' + e.message);
     }
   };
 
+  // Delete file from Drive
   document.getElementById('deleteFileBtn').onclick = async () => {
     const fileId = document.getElementById('deleteFileId').value.trim();
-    if(!fileId) { alert('Enter File ID'); return; }
-    if(!confirm('Delete file?')) return;
+    if (!fileId) {
+      alert('Enter File ID');
+      return;
+    }
+    if (!confirm('Delete file?')) return;
     try {
       await apiFetch(`/SynDrive/delete/${encodeURIComponent(fileId)}`, 'DELETE');
       alert('File deleted');
       loadFiles();
       document.getElementById('deleteFileId').value = '';
-    } catch(e) {
+    } catch (e) {
       alert('Failed to delete file: ' + e.message);
     }
   };
 
-  // SLACK
-
+  // Load Slack messages
   async function loadSlackMessages() {
     const channelId = document.getElementById('slackChannelId').value.trim();
     const el = document.getElementById('slackMessages');
-    if (!channelId) { el.textContent = 'Enter channel ID'; return; }
+    if (!channelId) {
+      el.textContent = 'Enter channel ID';
+      return;
+    }
     try {
       const res = await apiFetch(`/nika-talk/messages?channel=${encodeURIComponent(channelId)}`);
       if (res.error) {
@@ -487,13 +480,16 @@
       el.textContent = 'Failed: ' + e.message;
     }
   }
-
   document.getElementById('getSlackMessagesBtn').onclick = loadSlackMessages;
 
+  // Send Slack message
   document.getElementById('sendSlackMsgBtn').onclick = async () => {
     const channelId = document.getElementById('slackChannelId').value.trim();
     const text = document.getElementById('slackSendText').value.trim();
-    if (!channelId || !text) { alert('Enter channel and message'); return; }
+    if (!channelId || !text) {
+      alert('Enter channel and message');
+      return;
+    }
     try {
       await apiFetch('/nika-talk/send', 'POST', { channel: channelId, text });
       alert('Message sent');
@@ -504,11 +500,15 @@
     }
   };
 
+  // Update Slack message
   document.getElementById('updateSlackMsgBtn').onclick = async () => {
     const channelId = document.getElementById('slackChannelId').value.trim();
     const ts = document.getElementById('slackUpdateTs').value.trim();
     const text = document.getElementById('slackUpdateText').value.trim();
-    if (!channelId || !ts || !text) { alert('Enter channel, timestamp and new text'); return; }
+    if (!channelId || !ts || !text) {
+      alert('Enter channel, timestamp and new text');
+      return;
+    }
     try {
       await apiFetch('/nika-talk/update', 'POST', { channel: channelId, ts, text });
       alert('Message updated');
@@ -518,10 +518,14 @@
     }
   };
 
+  // Delete Slack message
   document.getElementById('deleteSlackMsgBtn').onclick = async () => {
     const channelId = document.getElementById('slackChannelId').value.trim();
     const ts = document.getElementById('slackDeleteTs').value.trim();
-    if (!channelId || !ts) { alert('Enter channel and timestamp'); return; }
+    if (!channelId || !ts) {
+      alert('Enter channel and timestamp');
+      return;
+    }
     if (!confirm('Delete this message?')) return;
     try {
       await apiFetch('/nika-talk/delete', 'POST', { channel: channelId, ts });
@@ -532,41 +536,45 @@
     }
   };
 
-  // DICTIONARY
-
-  document.getElementById('dictWord').oninput = debounce(async (e) => {
+  // Merriam-Webster dictionary lookup
+  document.getElementById('dictWord').addEventListener('input', debounce(async (e) => {
     const word = e.target.value.trim();
     const output = document.getElementById('dictResult');
-    if(!word) { output.value = ''; return; }
+    if (!word) {
+      output.value = '';
+      return;
+    }
     try {
       const data = await apiFetch(`/myle-book/define?word=${encodeURIComponent(word)}`);
-      if(Array.isArray(data) && data.length) {
-        const defs = data.map(d => (d.shortdef||[]).join('; ')).filter(Boolean).join('\n\n');
+      if (Array.isArray(data) && data.length) {
+        const defs = data
+          .map((d) => (d.shortdef || []).join('; '))
+          .filter(Boolean)
+          .join('\n\n');
         output.value = defs || 'No definitions found.';
-      } else if(data.error) {
+      } else if (data.error) {
         output.value = 'Error: ' + data.error;
       } else {
         output.value = 'No definitions found.';
       }
-    } catch(e) {
+    } catch (e) {
       output.value = 'Error: ' + e.message;
     }
-  }, 500);
+  }), 500);
 
-  // CHAT OPENAI
-
+  // OpenAI Chat
   const chatMessages = document.getElementById('chatMessages');
   const chatInput = document.getElementById('chatInput');
 
   document.getElementById('sendChatBtn').onclick = async () => {
     const msg = chatInput.value.trim();
-    if(!msg) return;
+    if (!msg) return;
     appendChat('You', msg);
     chatInput.value = '';
     try {
       const res = await apiFetch('/jatrail/chat', 'POST', { message: msg });
       appendChat('JaTrAll', res.reply || '(no reply)');
-    } catch(e) {
+    } catch (e) {
       alert('Chat failed: ' + e.message);
     }
   };
@@ -578,19 +586,19 @@
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  // Helper debounce function
+  // Debounce helper function
   function debounce(fn, delay = 300) {
     let timer = null;
-    return function(...args) {
+    return function (...args) {
       clearTimeout(timer);
       timer = setTimeout(() => fn.apply(this, args), delay);
-    }
+    };
   }
 
-  // On page load, check token to auto-login if possible
+  // Auto-login if token is stored
   window.onload = () => {
     const token = getToken();
-    if(token) {
+    if (token) {
       document.getElementById('loginForm').style.display = 'none';
       document.getElementById('appSection').style.display = 'block';
       loadEvents();
