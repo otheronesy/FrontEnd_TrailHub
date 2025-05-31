@@ -346,19 +346,27 @@
 
   // Get event by ID
   document.getElementById('getEventBtn').onclick = async () => {
-    const eventId = document.getElementById('eventIdInput').value.trim();
-    const output = document.getElementById('eventDetails');
-    if (!eventId) {
-      alert('Enter Event ID');
-      return;
-    }
-    try {
-      const event = await apiFetch(`/cylendar/event/${encodeURIComponent(eventId)}`);
-      output.textContent = JSON.stringify(event, null, 2);
-    } catch (e) {
-      output.textContent = 'Error: ' + e.message;
-    }
-  };
+  const eventId = document.getElementById('eventIdInput').value.trim();
+  const output = document.getElementById('eventDetails');
+  if (!eventId) { alert('Enter Event ID'); return; }
+  try {
+    const event = await apiFetch(`/cylendar/event/${encodeURIComponent(eventId)}`);
+    
+    // Formatting the event result like the events list
+    output.innerHTML = `
+      <div>
+        <strong>Name of Event:</strong> ${event.summary}<br />
+        <strong>ID:</strong> ${event.id}<br />
+        <strong>Date:</strong> ${event.start.dateTime || event.start.date}<br />
+        <strong>Time:</strong> ${event.start.dateTime || 'N/A'}
+      </div>
+      <hr />
+    `;
+  } catch (e) {
+    output.textContent = 'Error: ' + e.message;
+  }
+};
+
 
   // Add event
   document.getElementById('addEventBtn').onclick = async () => {
